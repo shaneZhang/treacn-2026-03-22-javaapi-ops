@@ -1,0 +1,70 @@
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Build artifacts
+target/
+build/
+out/
+*.jar
+*.war
+*.ear
+*.class
+
+# Logs
+logs/
+*.log
+*.tmp
+*.temp
+
+# Database files
+*.db
+*.mv.db
+*.trace.db
+charging.db
+chargingdb.*
+
+# Testing
+coverage/
+.coverage
+.pytest_cache
+nosetests.xml
+coverage.xml
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Configuration files (local overrides)
+application-local.yml
+application-local.properties
+*.env
+.env
+.env.local
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/

@@ -1,0 +1,75 @@
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+spring:
+  application:
+    name: charging-management
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:/app/data/chargingdb}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:false}
+
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+jwt:
+  secret: ${JWT_SECRET:charging-management-system-jwt-secret-key-2024-enterprise-grade}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+logging:
+  level:
+    root: INFO
+    com.charging: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+  file:
+    name: /app/logs/application.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 100MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

@@ -26,6 +26,11 @@ public class SystemController {
     private final SystemService systemService;
     private final UserRepository userRepository;
 
+    @GetMapping("/health")
+    public ApiResponse<String> health() {
+        return ApiResponse.success("OK", "Service is healthy");
+    }
+
     @GetMapping("/roles")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<Role>> getAllRoles() {

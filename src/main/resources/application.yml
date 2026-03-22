@@ -30,6 +30,16 @@ jwt:
   secret: charging-management-system-jwt-secret-key-2024-enterprise-grade
   expiration: 86400000
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     com.charging: INFO

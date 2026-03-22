@@ -10,8 +10,6 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests -B
 
-RUN java -Djarmode=layertools -jar target/*.jar extract --destination extracted
-
 FROM eclipse-temurin:17-jre-alpine AS runtime
 
 RUN apk add --no-cache curl && \
@@ -20,10 +18,7 @@ RUN apk add --no-cache curl && \
 
 WORKDIR /app
 
-COPY --from=builder /app/extracted/dependencies/ ./
-COPY --from=builder /app/extracted/spring-boot-loader/ ./
-COPY --from=builder /app/extracted/snapshot-dependencies/ ./
-COPY --from=builder /app/extracted/application/ ./
+COPY --from=builder /app/target/*.jar app.jar
 
 RUN chown -R appuser:appgroup /app
 
@@ -38,4 +33,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

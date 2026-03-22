@@ -1,0 +1,23 @@
+version: '3.8'
+
+# 开发环境覆盖配置
+# 使用方式: docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+services:
+  charging-management:
+    build:
+      target: development
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseG1GC
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - LOGGING_LEVEL_COM_CHARGING=DEBUG
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # 远程调试端口
+    volumes:
+      - .:/app
+      - /app/target
+      - /app/.m2
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"

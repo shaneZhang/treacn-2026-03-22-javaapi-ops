@@ -1,12 +1,9 @@
-# 第一阶段：构建阶段
-FROM eclipse-temurin:17-jdk-alpine AS builder
+# 第一阶段：构建阶段 - 使用官方Maven镜像
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
-# 安装Maven
-RUN apk add --no-cache maven
-
-# 复制pom.xml并下载依赖
+# 复制pom.xml并下载依赖（分层构建缓存优化）
 COPY pom.xml .
 RUN mvn dependency:go-offline -DskipTests
 
@@ -15,6 +12,9 @@ COPY src ./src
 
 # 构建应用
 RUN mvn clean package -DskipTests
+
+# 验证jar文件存在并列出文件
+RUN ls -la target/
 
 # 第二阶段：运行阶段
 FROM eclipse-temurin:17-jre-alpine
@@ -25,14 +25,11 @@ WORKDIR /app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # 设置时区
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata curl
 ENV TZ=Asia/Shanghai
 
-# 安装curl用于健康检查
-RUN apk add --no-cache curl
-
-# 从构建阶段复制jar文件
-COPY --from=builder /app/target/*.jar app.jar
+# 从构建阶段复制jar文件（使用精确文件名避免通配符问题）
+COPY --from=builder /app/target/charging-management-1.0.0.jar app.jar
 
 # 设置文件权限
 RUN chown appuser:appgroup app.jar

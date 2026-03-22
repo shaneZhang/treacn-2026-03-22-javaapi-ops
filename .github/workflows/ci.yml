@@ -5,7 +5,7 @@ env:
 
 on:
   push:
-    branches: [ main, develop ]
+    branches-ignore: []  # 触发所有分支的push事件
   pull_request:
     branches: [ main, develop ]
 
@@ -69,3 +69,27 @@ jobs:
               fi
             done
           fi
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: |
+            charging-management:${{ github.sha }}
+            charging-management:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: charging-management
+
+  datasource:
+    url: jdbc:h2:file:./chargingdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
+
+jwt:
+  secret: charging-management-system-jwt-secret-key-2024-enterprise-grade
+  expiration: 86400000
+
+logging:
+  level:
+    com.charging: INFO
